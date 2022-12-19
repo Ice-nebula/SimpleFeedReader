@@ -19,6 +19,16 @@ private System.Windows.Forms.TreeView _treeView { get; set; }
             _treeView = treeView;
         } //end con
 
+        public void AddNewFolder(FeedFolder item)
+        {
+            if (_treeView.SelectedNode == null) return;
+            FeedFolder folder = (FeedFolder)_treeView.SelectedNode.Tag;
+            var treeNode = new TreeNode(item.Name);
+            treeNode.Tag = item;
+            _treeView.SelectedNode.Nodes.Add(treeNode);
+            folder.AddSubFolder(item);
+        } //end method
+
         public void LoadFeedFolder()
         {
             _treeView.Nodes.Clear();
@@ -40,5 +50,6 @@ private System.Windows.Forms.TreeView _treeView { get; set; }
                 } //end foreach
             } //end if
         } //end method
+
     }
 }
