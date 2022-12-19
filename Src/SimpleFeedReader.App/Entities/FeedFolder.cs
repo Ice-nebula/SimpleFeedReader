@@ -3,15 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace SimpleFeedReader.App.Entities
 {
+[XmlRoot("folder")]
     public class FeedFolder
     {
+        public FeedFolder() { }
 //name of folder
+[XmlElement("name")]
 public string Name { get; set; }
 //sub folders
+[XmlArray("subFolders")]
 public List<FeedFolder> SubFolders { get; set; }
+[XmlArray("FeedItems")]
 public List<FeedDataItem> FeedDataItems { get; set; }
         public FeedFolder(string name)
         {

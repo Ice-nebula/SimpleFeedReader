@@ -33,7 +33,7 @@ private FeedDataController _feedDataController { get; set; }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            _feedDataController.LoadFeedFolder();
+            _feedDataController.Load();
         }
 
         private void PopulateContextMenu()
@@ -54,6 +54,19 @@ private FeedDataController _feedDataController { get; set; }
             if (result == DialogResult.OK)
             {
                 _feedDataController.AddNewFolder(form._feedFolder);
+            } //end if
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_feedDataController.Modified == true)
+            {
+                var result = MessageBox.Show("do you want to save changes?", "save", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    _feedDataController.Save();
+
+                } //end if
             } //end if
         }
     } //end class

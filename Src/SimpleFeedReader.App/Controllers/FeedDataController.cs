@@ -1,7 +1,10 @@
 ﻿using SimpleFeedReader.App.Entities;
+using SimpleFeedReader.App.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -11,11 +14,12 @@ namespace SimpleFeedReader.App.Controllers
 {
     public class FeedDataController
     {
-private FeedFolder _FeedFolder { get; set; }
+        FeedFolder _feedCollection { get; set; }
+public bool Modified { get; private set; }
 private System.Windows.Forms.TreeView _treeView { get; set; }
         public FeedDataController(System.Windows.Forms.TreeView treeView)
         {
-            _FeedFolder = new FeedFolder("news");
+            _feedCollection = new FeedFolder("database");
             _treeView = treeView;
         } //end con
 
@@ -27,29 +31,41 @@ private System.Windows.Forms.TreeView _treeView { get; set; }
             treeNode.Tag = item;
             _treeView.SelectedNode.Nodes.Add(treeNode);
             folder.AddSubFolder(item);
+            Modified = true;
         } //end method
 
-        public void LoadFeedFolder()
+        public void Load()
         {
-            _treeView.Nodes.Clear();
-                        var route = new TreeNode(_FeedFolder.Name);
-            route.Tag = _FeedFolder;
+            Modified = false;
+            if (File.Exists(@"database.xml") == true)
+            {
+                var rawXml = File.ReadAllText(@"database.xml");
+                _feedCollection = XmlDataManager.Deserialize<FeedFolder>(rawXml);
+            } //end if
+                        var route = new TreeNode(_feedCollection.Name);
+            route.Tag = _feedCollection;
             _treeView.Nodes.Add(route);
+            foreach (var f in _feedCollection.SubFolders)
+            {
+
+                PopulateTreeView(route, f);
+            } //end for.each
         } //end method
 
         private void PopulateTreeView(TreeNode routeNode, FeedFolder feedFolder)
         {
-            if (feedFolder.SubFolders.Count > 0)
-            {
-                foreach (var f in feedFolder.SubFolders)
+            var treeNode = new TreeNode(feedFolder.Name);
+            treeNode.Tag = feedFolder;
+            routeNode.Nodes.Add(treeNode);
+            foreach (var f in feedFolder.SubFolders)
                 {
-                    var treeNode = new TreeNode(f.Name);
-                    treeNode.Tag = f;
-                    routeNode.Nodes.Add(treeNode);
                     PopulateTreeView(treeNode, f);
                 } //end foreach
-            } //end if
         } //end method
-
-    }
-}
+        public void Save()
+        {
+            var data = XmlDataManager.Serialize(_feedCollection);
+            File.WriteAllText("database.xml", data);
+        } //end method.save
+    }//end class
+}//end namespace
