@@ -16,6 +16,7 @@ namespace SimpleFeedReader.App.Forms
 private FeedDataController _feedDataController { get; set; }
         private ContextMenu _tvwContextMenu;
         private MenuItem _addNewFolderMenuItem;
+        private MenuItem _deleteFolderMenuItem;
         private MenuItem _addNewFeedMenuItem;
         public MainForm()
         {
@@ -28,9 +29,21 @@ private FeedDataController _feedDataController { get; set; }
 
         private void _tvwContextMenu_Popup(object sender, EventArgs e)
         {
-            
+            if (tvwFeedFolder.SelectedNode.Level == 0)
+            {
+                _deleteFolderMenuItem.Enabled = false;
+            } //end if
+            else if (tvwFeedFolder.SelectedNode.Level > 0 && _deleteFolderMenuItem.Enabled == false)
+            {
+                _deleteFolderMenuItem.Enabled = true;
+            } //end else if
+            if (tvwFeedFolder.SelectedNode == null)
+            {
+                _addNewFeedMenuItem.Enabled = false;
+                _addNewFolderMenuItem.Enabled = false;
+                _deleteFolderMenuItem.Enabled = false;
+            } //endif
         }
-
         private void MainForm_Load(object sender, EventArgs e)
         {
             _feedDataController.Load();
@@ -41,11 +54,18 @@ private FeedDataController _feedDataController { get; set; }
             tvwFeedFolder.ContextMenu = _tvwContextMenu;
             _addNewFolderMenuItem = new MenuItem("add new folder");
             _addNewFeedMenuItem= new MenuItem("add new feed");
+            _deleteFolderMenuItem = new MenuItem("delete folder");
             _tvwContextMenu.MenuItems.Add(_addNewFeedMenuItem);
             _tvwContextMenu.MenuItems.Add(_addNewFolderMenuItem);
+            _tvwContextMenu.MenuItems.Add(_deleteFolderMenuItem);
             _addNewFolderMenuItem.Click += _addNewFolderMenuItem_Click;
-    
+            _deleteFolderMenuItem.Click += _deleteFolderMenuItem_Click;
         }//end method
+
+        private void _deleteFolderMenuItem_Click(object sender, EventArgs e)
+        {
+            deleteFolder();
+        }
 
         private void _addNewFolderMenuItem_Click(object sender, EventArgs e)
         {
@@ -69,5 +89,22 @@ private FeedDataController _feedDataController { get; set; }
                 } //end if
             } //end if
         }
+
+        private void tvwFeedFolder_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                deleteFolder();
+            } //end if
+        }
+
+        private void deleteFolder()
+        {
+            var result = MessageBox.Show("do you want to delete this folder?,", "delete", MessageBoxButtons.YesNo);
+            if (result == DialogResult.Yes)
+            {
+                _feedDataController.DeleteFolderAndSubFolder();
+            } //end if. check result dialog is yes
+        } //end method.delete folder
     } //end class
 }//end namespace

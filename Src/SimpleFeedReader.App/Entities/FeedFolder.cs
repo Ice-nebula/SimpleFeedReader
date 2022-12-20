@@ -29,6 +29,12 @@ public List<FeedDataItem> FeedDataItems { get; set; }
             FeedDataItems = new List<FeedDataItem>();
             SubFolders = new List<FeedFolder>();
         } //end con
+
+        public void DeleteAll()
+        {
+            SubFolders.Clear();
+            FeedDataItems.Clear();
+        } //end method.delete all
 /// <summary>
 /// add new folder to sub folder.
 /// </summary>

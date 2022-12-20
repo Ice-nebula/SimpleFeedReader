@@ -51,6 +51,7 @@
             this.tvwFeedFolder.Name = "tvwFeedFolder";
             this.tvwFeedFolder.Size = new System.Drawing.Size(121, 97);
             this.tvwFeedFolder.TabIndex = 1;
+            this.tvwFeedFolder.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tvwFeedFolder_KeyDown);
             // 
             // MainForm
             // 
