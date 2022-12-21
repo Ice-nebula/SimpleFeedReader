@@ -30,6 +30,8 @@
         {
             this.lbFeedFolder = new System.Windows.Forms.Label();
             this.tvwFeedFolder = new System.Windows.Forms.TreeView();
+            this.lbFeeds = new System.Windows.Forms.Label();
+            this.lvFeeds = new System.Windows.Forms.ListView();
             this.SuspendLayout();
             // 
             // lbFeedFolder
@@ -51,7 +53,31 @@
             this.tvwFeedFolder.Name = "tvwFeedFolder";
             this.tvwFeedFolder.Size = new System.Drawing.Size(121, 97);
             this.tvwFeedFolder.TabIndex = 1;
+            this.tvwFeedFolder.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvwFeedFolder_AfterSelect);
             this.tvwFeedFolder.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tvwFeedFolder_KeyDown);
+            // 
+            // lbFeeds
+            // 
+            this.lbFeeds.AccessibleName = "feeds";
+            this.lbFeeds.AutoSize = true;
+            this.lbFeeds.Location = new System.Drawing.Point(16, 115);
+            this.lbFeeds.Name = "lbFeeds";
+            this.lbFeeds.Size = new System.Drawing.Size(33, 13);
+            this.lbFeeds.TabIndex = 2;
+            this.lbFeeds.Text = "feeds";
+            // 
+            // lvFeeds
+            // 
+            this.lvFeeds.AccessibleName = "feeds";
+            this.lvFeeds.HideSelection = false;
+            this.lvFeeds.Location = new System.Drawing.Point(24, 125);
+            this.lvFeeds.MultiSelect = false;
+            this.lvFeeds.Name = "lvFeeds";
+            this.lvFeeds.Size = new System.Drawing.Size(121, 97);
+            this.lvFeeds.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.lvFeeds.TabIndex = 3;
+            this.lvFeeds.UseCompatibleStateImageBehavior = false;
+            this.lvFeeds.View = System.Windows.Forms.View.List;
             // 
             // MainForm
             // 
@@ -59,6 +85,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.lvFeeds);
+            this.Controls.Add(this.lbFeeds);
             this.Controls.Add(this.tvwFeedFolder);
             this.Controls.Add(this.lbFeedFolder);
             this.Name = "MainForm";
@@ -75,5 +103,7 @@
 
         private System.Windows.Forms.Label lbFeedFolder;
         private System.Windows.Forms.TreeView tvwFeedFolder;
+        private System.Windows.Forms.Label lbFeeds;
+        private System.Windows.Forms.ListView lvFeeds;
     }
 }

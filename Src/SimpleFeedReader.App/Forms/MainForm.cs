@@ -15,13 +15,15 @@ namespace SimpleFeedReader.App.Forms
     {
 private FeedDataController _feedDataController { get; set; }
         private ContextMenu _tvwContextMenu;
+        private ContextMenu _lvFeedsContextMenu;
         private MenuItem _addNewFolderMenuItem;
         private MenuItem _deleteFolderMenuItem;
         private MenuItem _addNewFeedMenuItem;
         public MainForm()
         {
             InitializeComponent();
-            _feedDataController = new FeedDataController(tvwFeedFolder);
+            _lvFeedsContextMenu = new ContextMenu();
+            _feedDataController = new FeedDataController(tvwFeedFolder, lvFeeds);
             _tvwContextMenu = new ContextMenu();
             PopulateContextMenu();
             _tvwContextMenu.Popup += _tvwContextMenu_Popup;
@@ -51,16 +53,31 @@ private FeedDataController _feedDataController { get; set; }
 
         private void PopulateContextMenu()
         {
+            lvFeeds.ContextMenu = _lvFeedsContextMenu;
             tvwFeedFolder.ContextMenu = _tvwContextMenu;
             _addNewFolderMenuItem = new MenuItem("add new folder");
             _addNewFeedMenuItem= new MenuItem("add new feed");
             _deleteFolderMenuItem = new MenuItem("delete folder");
+            var addNewFeedMenuItemClone = _addNewFeedMenuItem.CloneMenu();
+addNewFeedMenuItemClone.Click +=new EventHandler(_addNewFeedMenuItem_Click);
             _tvwContextMenu.MenuItems.Add(_addNewFeedMenuItem);
+            _lvFeedsContextMenu.MenuItems.Add(addNewFeedMenuItemClone);
             _tvwContextMenu.MenuItems.Add(_addNewFolderMenuItem);
             _tvwContextMenu.MenuItems.Add(_deleteFolderMenuItem);
             _addNewFolderMenuItem.Click += _addNewFolderMenuItem_Click;
             _deleteFolderMenuItem.Click += _deleteFolderMenuItem_Click;
+            _addNewFeedMenuItem.Click += _addNewFeedMenuItem_Click;
         }//end method
+
+        private void _addNewFeedMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = new AddNewFeedForm();
+            if (form.ShowDialog(this) == DialogResult.OK)
+            {
+                if (form.FeedItem == null) return;
+                _feedDataController.AddNewFeed(form.FeedItem);
+            } //end if
+        }
 
         private void _deleteFolderMenuItem_Click(object sender, EventArgs e)
         {
@@ -103,8 +120,13 @@ private FeedDataController _feedDataController { get; set; }
             var result = MessageBox.Show("do you want to delete this folder?,", "delete", MessageBoxButtons.YesNo);
             if (result == DialogResult.Yes)
             {
-                _feedDataController.DeleteFolderAndSubFolder();
+                _feedDataController.DeleteFolderAndSubFolders();
             } //end if. check result dialog is yes
         } //end method.delete folder
+
+        private void tvwFeedFolder_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            _feedDataController.LoadFeedsToListView();
+        }
     } //end class
 }//end namespace
