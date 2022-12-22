@@ -23,7 +23,7 @@ private FeedDataController _feedDataController { get; set; }
         {
             InitializeComponent();
             _lvFeedsContextMenu = new ContextMenu();
-            _feedDataController = new FeedDataController(tvwFeedFolder, lvFeeds);
+            _feedDataController = new FeedDataController(tvwFeedFolder, lvFeeds,lvFeedEntries);
             _tvwContextMenu = new ContextMenu();
             PopulateContextMenu();
             _tvwContextMenu.Popup += _tvwContextMenu_Popup;
@@ -71,12 +71,14 @@ addNewFeedMenuItemClone.Click +=new EventHandler(_addNewFeedMenuItem_Click);
 
         private void _addNewFeedMenuItem_Click(object sender, EventArgs e)
         {
-            var form = new AddNewFeedForm();
-            if (form.ShowDialog(this) == DialogResult.OK)
+            using (var form = new AddNewFeedForm())
             {
-                if (form.FeedItem == null) return;
-                _feedDataController.AddNewFeed(form.FeedItem);
-            } //end if
+                if (form.ShowDialog(this) == DialogResult.OK)
+                {
+                    if (form.FeedItem == null) return;
+                    _feedDataController.AddNewFeed(form.FeedItem);
+                } //end if
+            }//end using
         }
 
         private void _deleteFolderMenuItem_Click(object sender, EventArgs e)
@@ -127,6 +129,16 @@ addNewFeedMenuItemClone.Click +=new EventHandler(_addNewFeedMenuItem_Click);
         private void tvwFeedFolder_AfterSelect(object sender, TreeViewEventArgs e)
         {
             _feedDataController.LoadFeedsToListView();
+        }
+
+        private void lvFeedEntries_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private async void lvFeeds_SelectedIndexChanged(object sender, EventArgs e)
+        {
+           await _feedDataController.fetchNewFeedAsync();
         }
     } //end class
 }//end namespace
